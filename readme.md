@@ -1,17 +1,43 @@
 # Node.js Demo Project
 
 
-# How to install
+### How to install
 ```
 git clone https://github.com/codestar-work/start
 cd start
 npm install express ejs mongodb
 ```
 
-
-### Startting mongodb on mac OS
+### Starting MongoDB on Windows
 ```
-    cd desktop/mongo/bin
-    ./mongod --dbpath .
-    ./mongo
-    ```
+mongodb on Windows:
+cd /Users/xxx/Desktop/mongo/bin
+mongod --dbpath . --storageEngine=mmapv1
+```
+
+### Staring MongoDB on macOS
+```
+cd /Users/xxx/Dektop/mongo/bin
+./mongod --dbpath .
+```
+
+### Starting Application
+```
+node app
+```
+
+
+### Install multer
+```
+npm install multer
+```
+
+### Install express ejs
+```
+npm install express ejs
+```
+
+### Install mongo
+```
+npm install mongodb
+```

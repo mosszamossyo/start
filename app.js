@@ -3,6 +3,8 @@ var app = express();
 var ejs = require('ejs');
 var mongo = require('mongodb');
 var crypto = require('crypto');
+var multer = require('multer');
+var upload = multer({dest: 'uploads' });
 var granted = [ ];
 
 app.listen(3500);
@@ -13,16 +15,60 @@ app.get('/register', function(req, res) {
 	res.render('register.html');
 });
 app.post('/register', registerNewUser);
-app.get('/list', showAll);
 app.get('/login', (req, res) => res.render('login.html'));
 app.post('/login', loginUser);
 app.get('/profile', showProfile);
 app.get('/logout', logoutUser);
-app.get('/products', function(req, res) {
+app.get('/new', showNewPost);
+app.get('/save', saveNewPost);
+app.post('/save', upload.single('photo'), savePost);
+app.get('/list', showAll);
+/* app.get('/products', function(req, res) {
 	res.render('products.html', {coffee:['Latte', 'Mocha', 'Esp']});
 });
-app.get('/new',showNewPost);
-app.get('/new', (req, res) => res.render('new.html'));
+*/
+app.get('/view/:id'. showDetail);
+app.get('/total', calculate);
+function calculate(req,res){
+    var result = req.query.price * 107 /100;
+    res.send({"Total":result});
+}
+
+app.get('/area/:r' ,area);
+function area(req,res){
+    var result = Math.PI * req.params.r * req.params.r;
+    res.send('The area is ' + result);
+
+}
+
+app.get('/interst', interest);
+function interest(req ,res){
+    var result = req.query.balance * 1.25 /100 ;
+    res.senf('THe interest is ' + result);
+}
+
+app.get('/fixed/:balance', fixed);
+function fixed(req,res){
+    var result = req.params.balance *1.25 /100 ;
+    res.send('the interest is '+ result);
+}
+var coffee = [
+    { Name : 'Latte', Price : 80},
+    { Name : 'Mocha', Price : 90},
+    { Name : 'Espresso', Price : 70}
+]
+
+app.get('/budget/:Price' .showCoffee);
+function showCoffee(req,res){
+    //req.params.coffee
+    for(var i = 0 ; i < coffee.length ; i++){
+        if(req.params.pirice >= coffee[i].price){
+            result.push(coffee[i]);
+        }
+    }
+}
+
+
 app.use( express.static('public') );
 app.use( showError );
 
@@ -122,35 +168,70 @@ function showError(req, res, next) {
 	res.status(404).render('error.html');
 }
 
-function showNewPost(req, res){
-    if(granted[req.session] == null){
-        res.redirect('/login');
-    }else{
-        res.render('new.html');
-    }
+function showNewPost(req, res) {
+	if (granted[req.session] == null) {
+		res.redirect('/login');
+	} else {
+		res.render('new.html');
+	}
 }
 
-
-function saveNewPost( req, res){
-    // req.query.topic
-    // req.query.detail
-    // granted[req.session]._id
-    if(granted[req.session] == null){
-        res.redirect('/login')
-    }else{
+function savePost(req, res) {
+	if (granted[req.session] == null) {
+		res.redirect('/login');
+	} else {
+		// 1 console.log(req.file);
         var data = {};
-        data.topic = req.query.topic;
-        data.detail = req.query.detail;
+        data.topic = req.body.topic;
+        data.detail = req.body.detail;
         data.owner = granted[req.session]._id;
-        monogo.mongoClient.connect('monogodb://127.0.0.1/start', (error,db) => db.collection('post').insert(data));
-        res.redirect('/profile');
-    }
+        data.time = new Data();
+        data.photo = req.file.filename;
+		// 1 res.redirect('/profile');
+        mongo.MongoClient.connect( 'mongodb://127.0.0.1/start', (error,db) => db.collection('post').insert(data) );
+        res.redirect('/list');
+	}
 }
 
-function showAll(req,res){
-    mongo.MongoClient.connect("mongodb://127.0.0.1/start", (error,db) => db.collection('post'.find().toArray(
-        (error,data) => {
-            res.render('lest.html',{post: data});
-        }
-    )))
+function saveNewPost(req, res) {
+	if (granted[req.session] == null) {
+		res.redirect('/login');
+	} else {
+		var data = {};
+		data.topic = req.query.topic;
+		data.detail = req.query.detail;
+		data.owner = granted[req.session]._id;
+		data.time  = new Date();
+		mongo.MongoClient.connect('mongodb://127.0.0.1/start',
+			(error, db) => db.collection('post').insert(data)
+		);
+		res.redirect('/profile');
+	}
+}
+
+function showAll(req, res) {
+	mongo.MongoClient.connect('mongodb://127.0.0.1/start',
+		(error, db) => {
+			db.collection('post').find().toArray(
+				(error, data) => {
+					res.render('list.html', {post: data});
+				}
+			);	
+		}
+	);
+}
+
+function showDetail(req, res){
+    //  /view/89375984375
+    //  req.params.id
+
+    mongo.MongoClient.connect('mondb://127.0.0.1/start' , (error,db) => {
+        var query = {_id : mongo.IbjectId(req.params.id)};
+        db.collection('post').find(query).toArray(
+            (error,data) =>{
+                res.render('detail.html',{post:data[0]});
+            }
+        );
+    });
+
 }

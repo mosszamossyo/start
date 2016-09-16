@@ -1,5 +1,25 @@
 <% include header.html %>
+<style>
+    .block{
+        border:2px solid orange;
+        margin-top: 10px;
+        padding:10px;
+        border-radius:5px
 
-<%= post[0].topic  %>
+    }
+    img{
+        max-width: 100%;
+    }
+</style>
 
+<div class="container">
+    <% for(var i= 0; i < post.length ;i++){ %>
+        <div class="block">
+            <h3> <a href="/view/<%= post."
+                <%=post[i].topic %>
+                </h3>
+            <h3><%=post[i].detail %></h3>
+             <% } %>
+
+</div>
 <% include footer.html %>
