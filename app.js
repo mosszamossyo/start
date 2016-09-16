@@ -13,6 +13,7 @@ app.get('/register', function(req, res) {
 	res.render('register.html');
 });
 app.post('/register', registerNewUser);
+app.get('/list', showAll);
 app.get('/login', (req, res) => res.render('login.html'));
 app.post('/login', loginUser);
 app.get('/profile', showProfile);
@@ -20,6 +21,7 @@ app.get('/logout', logoutUser);
 app.get('/products', function(req, res) {
 	res.render('products.html', {coffee:['Latte', 'Mocha', 'Esp']});
 });
+app.get('/new',showNewPost);
 app.get('/new', (req, res) => res.render('new.html'));
 app.use( express.static('public') );
 app.use( showError );
@@ -126,4 +128,29 @@ function showNewPost(req, res){
     }else{
         res.render('new.html');
     }
+}
+
+
+function saveNewPost( req, res){
+    // req.query.topic
+    // req.query.detail
+    // granted[req.session]._id
+    if(granted[req.session] == null){
+        res.redirect('/login')
+    }else{
+        var data = {};
+        data.topic = req.query.topic;
+        data.detail = req.query.detail;
+        data.owner = granted[req.session]._id;
+        monogo.mongoClient.connect('monogodb://127.0.0.1/start', (error,db) => db.collection('post').insert(data));
+        res.redirect('/profile');
+    }
+}
+
+function showAll(req,res){
+    mongo.MongoClient.connect("mongodb://127.0.0.1/start", (error,db) => db.collection('post'.find().toArray(
+        (error,data) => {
+            res.render('lest.html',{post: data});
+        }
+    )))
 }
