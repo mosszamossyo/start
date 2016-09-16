@@ -13,4 +13,5 @@ npm install express ejs mongodb
 ```
     cd desktop/mongo/bin
     ./mongod --dbpath .
-    
+    ./mongo
+    ```
