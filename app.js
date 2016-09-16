@@ -1,4 +1,4 @@
-ar express = require('express');
+var express = require('express');
 var app = express();
 var ejs = require('ejs');
 var mongo = require('mongodb');
@@ -20,6 +20,7 @@ app.get('/logout', logoutUser);
 app.get('/products', function(req, res) {
 	res.render('products.html', {coffee:['Latte', 'Mocha', 'Esp']});
 });
+app.get('/new', (req, res) => res.render('new.html'));
 app.use( express.static('public') );
 app.use( showError );
 
@@ -117,4 +118,12 @@ function logoutUser(req, res) {
 
 function showError(req, res, next) {
 	res.status(404).render('error.html');
+}
+
+function showNewPost(req, res){
+    if(granted[req.session] == null){
+        res.redirect('/login');
+    }else{
+        res.render('new.html');
+    }
 }
