@@ -64,14 +64,15 @@ function registerNewUser(req, res){
     var data = "";
     req.on('data', chunk => data += chunk);
     req.on('end', () =>{
-        data = decodeURIComponent(data);
+        var u = { };
         data = data.replace(/\+/g,' ' );//ทำให้เว้นวรรคจาก+ เป็นช่องว่าง
         var a = data.split('&');//แบ่งข้อมูลขั้นด้วย &
-        var u = { };
-        for(var i=0;i < a.length;i++){
+        for( var i = 0; i < a.length;i++){
             var f = a[i].split('=');
-            u[f[0]] = f[1];
+            [[f[0]]]
         }
+        
+       
 
 
         u.password = crypto.createHmac('sha256',u.password).digest('hex');
