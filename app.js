@@ -70,6 +70,8 @@ function showCoffee(req,res){
 
 
 app.use( express.static('public') );
+app.use( express.static('uploads') );
+
 app.use( showError );
 
 function session(req, res, next) {
@@ -181,12 +183,12 @@ function savePost(req, res) {
 		res.redirect('/login');
 	} else {
 		// 1 console.log(req.file);
-        var data = {};
+        var data = { };
         data.topic = req.body.topic;
-        data.detail = req.body.detail;
+        data.detail = req.body.detail; // เป็นคำสั่งเรียกไฟล์จาก multer 
         data.owner = granted[req.session]._id;
-        data.time = new Data();
-        data.photo = req.file.filename;
+        data.time = new Date();
+        data.photo = req.file.filename; // เป็นคำสั่งเรียกไฟล์จาก multer ชื่อ filenmae
 		// 1 res.redirect('/profile');
         mongo.MongoClient.connect( 'mongodb://127.0.0.1/start', (error,db) => db.collection('post').insert(data) );
         res.redirect('/list');

@@ -12,14 +12,31 @@
     }
 </style>
 
+
+
 <div class="container">
+    <div class="btn-group">
+    <button class='btn btn-primary' href="/home">Home</button>
+    <button class="btn btn-info" href='/profile'>Profile</button>
+    <button class="btn btn-waring" href='/new'>New Edit</button>
+    <button class='btn btn-danger' href='logout'>Log Out</button>
+    </div>
     <% for(var i= 0; i < post.length ;i++){ %>
         <div class="block">
-            <h3> <a href="/view/<%= post."
-                <%=post[i].topic %>
+            <h3> <a href="/view/<%= post._id %>">
+                <%= post[i].topic %>
+                </a>
                 </h3>
-            <h3><%=post[i].detail %></h3>
+
+                <p><%= post[i].detail %></p>
+               <% if (post[i].photo) { %>
+          
+                <img src='<%= post[i].photo %>'>
              <% } %>
 
 </div>
+<% } %>
+</div>
+
+
 <% include footer.html %>
