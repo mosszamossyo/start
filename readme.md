@@ -31,6 +31,11 @@ node app
 npm install socket.io
 ```
 
+### Install package.json
+```
+npm init กด Enter รัวๆ
+```
+
 ### Install multer
 ```
 npm install multer

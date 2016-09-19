@@ -13,7 +13,12 @@ var io = socket();
 
 //app.listen(3500); // --> ของ express
 io.listen(app.listen(3500)); // --> ของ socket.io ที่ใช้ร้วมกับexpress
- 
+
+io.on('connection', user => {
+
+})
+
+
 app.engine('html', ejs.renderFile);
 app.use(session);
 app.get('/', (req, res) => res.render('index.html') );
@@ -23,6 +28,7 @@ app.get('/register', function(req, res) {
 app.post('/register', registerNewUser);
 app.get('/login', (req, res) => res.render('login.html'));
 app.post('/login', loginUser);
+app.get('/chat', (req ,res) => res.render('chat.html'))
 app.get('/profile', showProfile);
 app.get('/logout', logoutUser);
 app.get('/new', showNewPost);

@@ -1,0 +1,29 @@
+{
+  "name": "start",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "ejs": "*",
+    "express": "*",
+    "mongo": "*",
+    "mongodb": "*",
+    "multer": "*",
+    "node": "*",
+    "socket.io": "*"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mosszamossyo/start.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mosszamossyo/start/issues"
+  },
+  "homepage": "https://github.com/mosszamossyo/start#readme"
+}
