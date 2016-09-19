@@ -7,7 +7,13 @@ var multer = require('multer');
 var upload = multer({dest: 'uploads' });
 var granted = [ ];
 
-app.listen(3500);
+var socket = require('socket.io');
+var io = socket();
+
+
+//app.listen(3500); // --> ของ express
+io.listen(app.listen(3500)); // --> ของ socket.io ที่ใช้ร้วมกับexpress
+ 
 app.engine('html', ejs.renderFile);
 app.use(session);
 app.get('/', (req, res) => res.render('index.html') );

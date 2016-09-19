@@ -26,6 +26,10 @@ cd /Users/xxx/Dektop/mongo/bin
 node app
 ```
 
+### Install socket.io
+```
+npm install socket.io
+```
 
 ### Install multer
 ```
