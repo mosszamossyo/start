@@ -12,15 +12,16 @@
     }
 </style>
 
-
-
-<div class="container">
+<div class="container-fluid">
     <div class="btn-group">
-    <button class='btn btn-primary' href="/home">Home</button>
-    <button class="btn btn-info" href='/profile'>Profile</button>
-    <button class="btn btn-waring" href='/new'>New Edit</button>
-    <button class='btn btn-danger' href='logout'>Log Out</button>
-    </div>
+    <a class='btn btn-primary' href="/home">Home</a>
+    <a class="btn btn-info" href='/profile'>Profile</a>
+    <a class="btn btn-warning" href='/new'>New Edit</a>
+    <a class='btn btn-danger' href='logout'>Log Out</a>
+    </div
+</div>
+<div class="container">
+    
     <% for(var i= 0; i < post.length ;i++){ %>
         <div class="block">
             <h3> <a href="/view/<%= post._id %>">
