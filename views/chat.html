@@ -1,0 +1,33 @@
+<% include header.html %>
+<style>
+    #chat-history{
+        min-height:80%;
+        background:#eee;
+        margin-top:10px;
+        border-radius:4px;
+    }
+    input{
+        margin-top:10px;
+        margin-bottom:10px;
+    }
+    </style>
+
+<div class="container">
+    <div id="chat-history">
+
+    </div>
+    <input id="message" class="form-control" autofocus placeholder="message">
+    <button class="btn btn-primary" on-click='send()'>Send</button>
+</div>
+
+<script src='/socket.io/socket.io.js'></script>
+<script>
+    var socket = io.connect('/');
+
+    function send(){
+        socket.send( $('#message').val());
+        $('#message').val('');
+    }
+
+</script>
+<% include footer.html %>
