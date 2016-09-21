@@ -1,7 +1,7 @@
 <% include header.html %>
 <style>
     #chat-history{
-        min-height:80%;
+        min-height:100px;
         background:#eee;
         margin-top:10px;
         border-radius:4px;
@@ -13,21 +13,110 @@
     </style>
 
 <div class="container">
+
     <div id="chat-history">
 
     </div>
-    <input id="message" class="form-control" autofocus placeholder="message">
-    <button class="btn btn-primary" on-click='send()'>Send</button>
+
+    <form action="javascript:send()">
+		<input id="message"
+			class="form-control"
+			autofocus
+			placeholder="Message">
+
+		<button type="submit" class="btn btn-primary">
+			Send
+		</button>
+        <a href="javascript:shareLocation()"
+        class="btn btn-success">Share Location</a>
+        <a href="javascript:clear()" class="btn btn-danger">
+            Clear Message </a>
+    </form>    
+
 </div>
 
-<script src='/socket.io/socket.io.js'></script>
-<script>
-    var socket = io.connect('/');
 
-    function send(){
-        socket.send( $('#message').val());
-        $('#message').val('');
+  
+<script>
+    var socket = io.connect("/");
+    var temp = document.cookie + ';';
+    var position = temp.indexOf('session=');
+    var semicolon = temp.indexOf(';', position);
+  var session = temp.substring(position + 8, semicolon);
+
+
+    socket.send({action:"join", session : session});
+
+    socket.on('message',showMessage);
+
+    var engine = null;
+    if(webkitSpeechRecognition){
+        engine = new webkitSpeechRecognition();
+        engine.lang = 'th';
+        engine.onresult = speechResult;
+        $('#message').keydown( e => {
+            if(e.which == 16) engine.start();
+        });
+        $('#message').keyup( e => {
+            if(e.which == 16) engine.stop();
+        });
     }
 
+function speechResult(e){
+    var o = {
+        action: 'text',
+        session: session,
+        data: e.results[0][0].transcript
+    };
+    socket.send(o);
+}
+
+    function showMessage(o){
+       var message = "";
+       message += "<b>" + o.user + " </b>";
+       message += o.data + "<br>";
+       $('#chat-history').append(message);
+    }
+
+    function send(){
+
+        
+        var o = { };
+        o.action = "text";
+        o.data = $("#message").val();
+        o.session = session;
+       //  1 o.user = "<%= user.name %>";
+        // 1 o.email = "<%= user.email %>";
+        // 2 socket.send( $('#message').val());
+       socket.send(o);
+        $('#message').val("");
+    }
+
+    function shareLocation(){
+        navigator.geolocation.getCurrentPosition(
+            locationSuccess, locationFailed, {enableHighAccuracy:true})
+    }
+    function locationSuccess(position){
+        var lat = position.coords.latitude;
+        var lon = position.coords.longtitude;
+        var link = 'http://wikimapia.org/#lat=' + lat +
+                    '&lon=' + lon + '&z=15&m=w';
+        var message = "<a target='_blank' href='" + link + 
+		            "'>Location</a>";
+        var o = {
+            action:'test',
+            data: message,
+            session: session
+        };
+        socket.send(o);
+    }
+
+    function locationFailed(error){
+        console.log(error);
+    }
+
+    function clear(){
+        $('#chat-history').html('');
+    }
 </script>
 <% include footer.html %>

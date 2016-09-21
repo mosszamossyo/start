@@ -1,5 +1,9 @@
 var express = require('express');
 var app = express();
+
+var socket = require('socket.io');
+var io = socket();
+
 var ejs = require('ejs');
 var mongo = require('mongodb');
 var crypto = require('crypto');
@@ -7,8 +11,7 @@ var multer = require('multer');
 var upload = multer({dest: 'uploads' });
 var granted = [ ];
 
-var socket = require('socket.io');
-var io = socket();
+
 
 
 //app.listen(3500); // --> ของ express
@@ -18,12 +21,38 @@ io.listen(app.listen(3500)); // --> ของ socket.io ที่ใช้ร้
  io.on('connection', user => {
 	console.log(user);
  })
-*/
-io.on('connection', client => {
+
+
+
+ io.on('connection', client => {
 	client.on('message', m => {
-		console.log(m)
+		// console.log(m)
+		io.send(m);
+	});
+ });
+*/
+
+
+io.on("connection", client => {
+	client.on("message", o => {
+		if (o.action == 'text') {
+			o.user = granted[o.session].name;
+			io.send(o);
+		} else if (o.action == 'join') {
+			io.send({action:'text', user:'Server',
+				data: granted[o.session].name + " just joined."});
+			client.user = o.user;
+		}
+	});
+	client.on("disconnect", () => {
+		if (client.user) {
+			var m = {action: 'text', user:'Server',
+				data: client.user + " just left."};
+			io.send(m);
+		}
 	});
 });
+
 
 app.engine('html', ejs.renderFile);
 app.use(session);
@@ -92,6 +121,29 @@ app.use( express.static('uploads') );
 
 app.use( showError );
 
+
+// function session(req, res, next) {
+	// var cookie = req.headers["cookie"];
+	// if (cookie == null) {
+		// cookie = "";
+	// }
+	// var data = cookie.split(";");
+// for (var i = 0; i < data.length; i++) {
+	//	var field = data[i].split("=");
+	//	if (field[0] == "session") {
+	//		req.session = field[1];
+	//	}
+//	}
+//	if (req.session == null) {
+//		req.session = parseInt(Math.random() * 1000000) + 
+//				"-" + parseInt(Math.random() * 1000000) + 
+//				"-" + parseInt(Math.random() * 1000000) + 
+//				"-" + parseInt(Math.random() * 1000000);
+//		res.set("Set-Cookie", "session=" + req.session);
+//	}
+//	next();
+// }
+
 function session(req, res, next) {
 	var cookie = req.headers["cookie"];
 	if (cookie == null) {
@@ -112,7 +164,7 @@ function session(req, res, next) {
 		res.set("Set-Cookie", "session=" + req.session);
 	}
 	next();
-}
+} 
 
 function registerNewUser(req, res) {
 	var data = "";
@@ -260,6 +312,7 @@ function showChat(req,res){
 	if(granted[req.session] == null){
 		res.redirect('/login');
 	}else{
-		res.render('chat.html');
+		res.render('chat.html',
+			{ user: granted[req.session]});
 	}
 }
