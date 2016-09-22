@@ -10,7 +10,53 @@ var crypto = require('crypto');
 var multer = require('multer');
 var upload = multer({dest: 'uploads' });
 var granted = [ ];
+// sql ------------------------------------------------
+var mysql = require('mysql');
+var server = {
+	host: 'appspeed.us',
+	user: 'bill',
+	password: 'bill123',
+	database:'starbug'
+}
+var pool = mysql.createPool(server);
+app.get('/lists',listData);
+app.get('/budgets',listByBudget);
+app.get('/showcoffee',showCoffee1);
 
+function showCoffee1(req,res){
+	pool.query('select * from coffee',
+	(error,data) =>{
+		res.render('showcoffee.html', {coffee:data})
+	})
+}
+
+function listByBudget(req,res){
+	pool.query('select * from coffee where price <= ?',
+	[req.query.price], (error,data) => {
+		res.send(data);
+	})
+}
+function listData(req,res){
+	pool.query('Select * from coffee',
+	function (error, data){
+		res.send(data);
+	});
+}
+
+/*var connection = mysql.createConnection(server)
+connection.connect()
+// connection.query('select * from coffee',show)
+connection.query(`
+	insert into coffee(name,size,price) values()
+				`)
+connection.end()
+
+function show(error,data){
+	console.log(data);
+}*/
+
+
+// sql------------------------------
 
 
 
