@@ -221,9 +221,11 @@ function registerNewUser(req, res) {
 		var a = data.split('&');
 		for (var i = 0; i < a.length; i++) {
 			var f = a[i].split('=');
-			u[f[0]] = decodeURIComponent(f[1]);
+			if(f[0] == 'name'){
+				u[f[0]] = decodeURIComponent(f[1]);
+			}
 		}
-		u.password = crypto.createHmac('sha256', u.password).digest('hex');
+		u.password = crypto.createHmac('sha256', u.password).update('mini-password').digest('hex');
 		mongo.MongoClient.connect('mongodb://127.0.0.1/start',
 			(error, db) => {
 				db.collection('user').find({email: u.email}).toArray(
